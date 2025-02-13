@@ -25,15 +25,10 @@ jobs:
           mvn clean compile assembly:single
           ls -l
 
-      - name: Build Chromium extensions ZIP
-        run: |
-          zip -r browser-extensions.zip browser-extensions
-      
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
           files: |
             burp/target/*.jar
-            browser-extensions.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   
