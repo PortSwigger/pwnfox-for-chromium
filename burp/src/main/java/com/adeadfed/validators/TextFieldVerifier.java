@@ -1,4 +1,4 @@
-package com.adeadfed;
+package com.adeadfed.validators;
 import java.util.function.Predicate;
 
 import javax.swing.*;

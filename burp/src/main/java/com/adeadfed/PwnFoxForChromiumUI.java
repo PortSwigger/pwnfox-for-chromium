@@ -1,5 +1,10 @@
 package com.adeadfed;
 
+import static com.adeadfed.common.Constants.*;
+import com.adeadfed.common.ProfileColors;
+import com.adeadfed.validators.FsValidator;
+
+import com.adeadfed.validators.TextFieldVerifier;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -15,7 +20,6 @@ public class PwnFoxForChromiumUI {
     private JPanel ui;
     private final PwnFoxForChromium pwnChromiumExtension;
     private JTextField pwnChromeExePath;
-    private JTextField pwnChromeExtensionsPath;
     private JTextField pwnChromeProfilesPath;
     private JButton chooseExeButton;
     private JButton chooseExtDirButton;
@@ -50,7 +54,6 @@ public class PwnFoxForChromiumUI {
 
     private boolean areSettingsValid() {
         return pwnChromeExePath.getInputVerifier().verify(pwnChromeExePath) &&
-                pwnChromeExtensionsPath.getInputVerifier().verify(pwnChromeExtensionsPath) &&
                 pwnChromeProfilesPath.getInputVerifier().verify(pwnChromeProfilesPath);
     }
 
@@ -58,9 +61,8 @@ public class PwnFoxForChromiumUI {
         // validate settings before the launch one final time
         if (areSettingsValid()) {
             String chromiumExePath = pwnChromeExePath.getText();
-            String chromiumExtensionsPath = pwnChromeExtensionsPath.getText();
             String chromiumProfilesPath = pwnChromeProfilesPath.getText();
-            boolean result = this.pwnChromiumExtension.startDetachedPwnChromium(chromiumExePath, chromiumExtensionsPath, chromiumProfilesPath, themeColor);
+            boolean result = this.pwnChromiumExtension.startDetachedPwnChromium(chromiumExePath, chromiumProfilesPath, themeColor);
             if (!result) {
                 JOptionPane.showMessageDialog(null, "An error launching PwnChromium has occurred. Check the extension logs");
             }
@@ -95,12 +97,10 @@ public class PwnFoxForChromiumUI {
     public PwnFoxForChromiumUI(PwnFoxForChromium pwnChromiumExtension) {
         // setup Swing GUI
         this.pwnChromiumExtension = pwnChromiumExtension;
-        this.pwnChromeExePath.setInputVerifier(new TextFieldVerifier(this.pwnChromiumExtension::isChromiumExecutableValid));
-        this.pwnChromeExtensionsPath.setInputVerifier(new TextFieldVerifier(this.pwnChromiumExtension::isExtensionsDirectoryValid));
-        this.pwnChromeProfilesPath.setInputVerifier(new TextFieldVerifier(this.pwnChromiumExtension::isDirectoryValid));
-        setupSettingsButton(chooseExeButton, pwnChromeExePath, this.pwnChromiumExtension.PERSISTENT_CHROME_EXE, JFileChooser.FILES_ONLY);
-        setupSettingsButton(chooseExtDirButton, pwnChromeExtensionsPath, this.pwnChromiumExtension.PERSISTENT_EXTENSIONS_DIR, JFileChooser.DIRECTORIES_ONLY);
-        setupSettingsButton(chooseProfilesDirButton, pwnChromeProfilesPath, this.pwnChromiumExtension.PERSISTENT_PROFILES_DIR, JFileChooser.DIRECTORIES_ONLY);
+        this.pwnChromeExePath.setInputVerifier(new TextFieldVerifier(FsValidator::isChromiumExecutableValid));
+        this.pwnChromeProfilesPath.setInputVerifier(new TextFieldVerifier(FsValidator::isDirValid));
+        setupSettingsButton(chooseExeButton, pwnChromeExePath, PERSISTENT_CHROME_EXE, JFileChooser.FILES_ONLY);
+        setupSettingsButton(chooseProfilesDirButton, pwnChromeProfilesPath, PERSISTENT_PROFILES_DIR, JFileChooser.DIRECTORIES_ONLY);
         setupProfileButtons();
     }
 
@@ -119,6 +119,7 @@ public class PwnFoxForChromiumUI {
      * @noinspection ALL
      */
     private void $$$setupUI$$$() {
+        Color white = new Color(-1);
         ui = new JPanel();
         ui.setLayout(new GridLayoutManager(4, 1, new Insets(30, 30, 30, 30), -1, -1));
         settingsPanel = new JPanel();
@@ -131,16 +132,6 @@ public class PwnFoxForChromiumUI {
         pwnChromeExePath.setEditable(true);
         pwnChromeExePath.setEnabled(true);
         settingsPanel.add(pwnChromeExePath, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final JLabel label2 = new JLabel();
-        label2.setText("Path to the PwnFox For Chromium extensions directory");
-        settingsPanel.add(label2, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        pwnChromeExtensionsPath = new JTextField();
-        pwnChromeExtensionsPath.setEditable(true);
-        pwnChromeExtensionsPath.setEnabled(true);
-        settingsPanel.add(pwnChromeExtensionsPath, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        chooseExtDirButton = new JButton();
-        chooseExtDirButton.setText("Choose...");
-        settingsPanel.add(chooseExtDirButton, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         chooseExeButton = new JButton();
         chooseExeButton.setText("Choose...");
         settingsPanel.add(chooseExeButton, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -167,71 +158,71 @@ public class PwnFoxForChromiumUI {
         buttonsPanel.setLayout(new GridLayoutManager(2, 4, new Insets(0, 0, 0, 0), -1, -1));
         ui.add(buttonsPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         blueButton = new JButton();
-        blueButton.setBackground(new Color(-12866049));
+        blueButton.setBackground(ProfileColors.BLUE.getColor());
         blueButton.setBorderPainted(true);
         blueButton.setContentAreaFilled(true);
         blueButton.setFocusPainted(false);
         Font blueButtonFont = this.$$$getFont$$$(null, Font.BOLD, 16, blueButton.getFont());
         if (blueButtonFont != null) blueButton.setFont(blueButtonFont);
-        blueButton.setForeground(new Color(-1));
+        blueButton.setForeground(white);
         blueButton.setName("Blue");
         blueButton.setText("Blue");
         buttonsPanel.add(blueButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(100, 100), null, 0, false));
         cyanButton = new JButton();
-        cyanButton.setBackground(new Color(-13973606));
+        cyanButton.setBackground(ProfileColors.CYAN.getColor());
         Font cyanButtonFont = this.$$$getFont$$$(null, Font.BOLD, 16, cyanButton.getFont());
         if (cyanButtonFont != null) cyanButton.setFont(cyanButtonFont);
-        cyanButton.setForeground(new Color(-1));
+        cyanButton.setForeground(white);
         cyanButton.setName("Cyan");
         cyanButton.setText("Cyan");
         buttonsPanel.add(cyanButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 100), null, 0, false));
         greenButton = new JButton();
-        greenButton.setBackground(new Color(-11416320));
+        greenButton.setBackground(ProfileColors.GREEN.getColor());
         Font greenButtonFont = this.$$$getFont$$$(null, Font.BOLD, 16, greenButton.getFont());
         if (greenButtonFont != null) greenButton.setFont(greenButtonFont);
-        greenButton.setForeground(new Color(-1));
+        greenButton.setForeground(white);
         greenButton.setName("Green");
         greenButton.setText("Green");
         buttonsPanel.add(greenButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 100), null, 0, false));
         yellowButton = new JButton();
-        yellowButton.setBackground(new Color(-210176));
+        yellowButton.setBackground(ProfileColors.YELLOW.getColor());
         Font yellowButtonFont = this.$$$getFont$$$(null, Font.BOLD, 16, yellowButton.getFont());
         if (yellowButtonFont != null) yellowButton.setFont(yellowButtonFont);
-        yellowButton.setForeground(new Color(-1));
+        yellowButton.setForeground(white);
         yellowButton.setLabel("Yellow");
         yellowButton.setName("Yellow");
         yellowButton.setText("Yellow");
         buttonsPanel.add(yellowButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 100), null, 0, false));
         orangeButton = new JButton();
-        orangeButton.setBackground(new Color(-24551));
+        orangeButton.setBackground(ProfileColors.ORANGE.getColor());
         Font orangeButtonFont = this.$$$getFont$$$(null, Font.BOLD, 16, orangeButton.getFont());
         if (orangeButtonFont != null) orangeButton.setFont(orangeButtonFont);
-        orangeButton.setForeground(new Color(-1));
+        orangeButton.setForeground(white);
         orangeButton.setName("Orange");
         orangeButton.setText("Orange");
         buttonsPanel.add(orangeButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 100), null, 0, false));
         redButton = new JButton();
-        redButton.setBackground(new Color(-40369));
+        redButton.setBackground(ProfileColors.RED.getColor());
         redButton.setBorderPainted(true);
         Font redButtonFont = this.$$$getFont$$$(null, Font.BOLD, 16, redButton.getFont());
         if (redButtonFont != null) redButton.setFont(redButtonFont);
-        redButton.setForeground(new Color(-1));
+        redButton.setForeground(white);
         redButton.setName("Red");
         redButton.setText("Red");
         buttonsPanel.add(redButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 100), null, 0, false));
         pinkButton = new JButton();
-        pinkButton.setBackground(new Color(-46118));
+        pinkButton.setBackground(ProfileColors.PINK.getColor());
         Font pinkButtonFont = this.$$$getFont$$$(null, Font.BOLD, 16, pinkButton.getFont());
         if (pinkButtonFont != null) pinkButton.setFont(pinkButtonFont);
-        pinkButton.setForeground(new Color(-1));
+        pinkButton.setForeground(white);
         pinkButton.setName("Pink");
         pinkButton.setText("Pink");
         buttonsPanel.add(pinkButton, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 100), null, 0, false));
         magentaButton = new JButton();
-        magentaButton.setBackground(new Color(-5213199));
+        magentaButton.setBackground(ProfileColors.MAGENTA.getColor());
         Font magentaButtonFont = this.$$$getFont$$$(null, Font.BOLD, 16, magentaButton.getFont());
         if (magentaButtonFont != null) magentaButton.setFont(magentaButtonFont);
-        magentaButton.setForeground(new Color(-1));
+        magentaButton.setForeground(white);
         magentaButton.setName("Magenta");
         magentaButton.setText("Magenta");
         buttonsPanel.add(magentaButton, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 100), null, 0, false));
@@ -243,7 +234,6 @@ public class PwnFoxForChromiumUI {
         final Spacer spacer3 = new Spacer();
         ui.add(spacer3, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         label1.setLabelFor(pwnChromeExePath);
-        label2.setLabelFor(pwnChromeExtensionsPath);
         label4.setLabelFor(pwnChromeProfilesPath);
     }
 
