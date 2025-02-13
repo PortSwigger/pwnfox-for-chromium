@@ -171,6 +171,10 @@ public class PwnFoxForChromium implements BurpExtension
         this.api = api;
         this.api.extension().setName("PwnFox For Chromium");
         populateDefaults();
+        this.api.logging().logToOutput("PwnFox For Chromium - Options loaded...");
         this.api.userInterface().registerSuiteTab("PwnFox For Chromium", new PwnFoxForChromiumUI(this).getUI());
+        this.api.logging().logToOutput("PwnFox For Chromium - Suite Tab loaded...");
+        this.api.proxy().registerRequestHandler(new PwnFoxForChromiumRequestHandler());
+        this.api.logging().logToOutput("PwnFox For Chromium - Request Interceptor loaded...");
     }
 }
