@@ -10,7 +10,7 @@ chrome.declarativeNetRequest.updateDynamicRules({
                     {
                         operation: 'set',
                         header: 'x-pwnfox-color',
-                        value: 'blue'
+                        value: '{{colorname}}'
                     }
                 ]
             },

@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "X-PwnFox-Color Header - Blue",
+    "name": "X-PwnFox-Color Header - {{colorname}}",
     "version": "1.0",
     "permissions": [
         "declarativeNetRequest"

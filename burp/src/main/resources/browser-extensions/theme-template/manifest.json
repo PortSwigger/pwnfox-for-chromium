@@ -1,15 +1,11 @@
 {
-    "name": "PwnFox - Blue",
+    "name": "PwnFox - {{colorname}}",
     "version": "1.0",
     "description": "ThemeBeta.com",
     "manifest_version": 3,
     "theme": {
         "colors": {
-            "frame": [
-                59,
-                173,
-                255
-            ],
+            "frame": [{{colorrgb}}],
             "toolbar": [
                 255,
                 255,

@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
             chrome.storage.sync.set({ proxyEnabled: newState }, function () {
                 if (newState) {
                     document.getElementById('toggleButton').textContent = 'Disable Proxy';
-                    document.getElementById('toggleButton').style.backgroundColor = '#f44336';
+                    document.getElementById('toggleButton').style.backgroundColor = '#F44336';
                 } else {
                     document.getElementById('toggleButton').textContent = 'Enable Proxy';
                     document.getElementById('toggleButton').style.backgroundColor = '#4CAF50';
