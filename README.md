@@ -14,7 +14,7 @@ PwnFox For Chromium allows you to:
 1. Download the up-to-date `PwnFox-For-Chromium.jar` from the [Releases](https://github.com/adeadfed/PwnFox-For-Chromium/releases) tab
 2. Import the PwnFox For Chromium JAR into the BurpSuite
 3. Navigate to the new extension tab and configure the settings below
-   - Set the Chromium path to a valid executable. BurpSuite is shipped with an embedded Chromium in the `burpbrowser` folder (e.g. `~/BurpSuitePro/burpbrowser` for the default installation on Unix)
+   - Set the Chromium path to a valid executable. BurpSuite is shipped with an embedded Chromium in the `burpbrowser` folder; you can lookup the location of your Burp Browser below ([## Burp Browser location](#burp-browser-location))
    - *Optionally* set your desired profile data directory to keep your work on different projects separated 
 4. Launch the configured Chromium right from the BurpSuite and enjoy!
 
