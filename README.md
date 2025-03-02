@@ -18,6 +18,27 @@ PwnFox For Chromium allows you to:
    - *Optionally* set your desired profile data directory to keep your work on different projects separated 
 4. Launch the configured Chromium right from the BurpSuite and enjoy!
 
+## Burp Browser location
+You can use Burp's built-in browser to deploy PwnFox for Chromium. Here are the common locations of Burp's Chrome executable:
+### Windows
+```
+~\AppData\Local\Programs\BurpSuiteCommunity\burpbrowser\{VERSION}\chrome.exe
+~\AppData\Local\Programs\BurpSuitePro\burpbrowser\{VERSION}\chrome.exe
+```
+### Linux
+```
+# kali installation
+~/.BurpSuite/burpbrowser/{VERSION}/chrome
+# official PortSwigger installers
+~/BurpSuitePro/burpbrowser/{VERSION}/chrome
+~/BurpSuiteCommunity/burpbrowser/{VERSION}/chrome
+```
+### MacOS
+```
+/Applications/Burp Suite Community Edition.app/Contents/Resources/app/burpbrowser/{VERSION}/Chromium.app/Contents/MacOS/Chromium
+/Applications/Burp Suite Community Professional.app/Contents/Resources/app/burpbrowser/{VERSION}/Chromium.app/Contents/MacOS/Chromium
+```
+
 ## Compiling the extension on your own with Maven
 ```
 git clone https://github.com/adeadfed/PwnFox-For-Chromium
