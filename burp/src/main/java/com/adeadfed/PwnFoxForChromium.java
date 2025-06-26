@@ -12,9 +12,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.nio.file.FileSystem;
+import java.nio.file.PathMatcher;
+import java.nio.file.FileSystems;
 
-public class PwnFoxForChromium implements BurpExtension
-{
+public class PwnFoxForChromium implements BurpExtension {
     public MontoyaApi api;
 
 
@@ -41,7 +43,8 @@ public class PwnFoxForChromium implements BurpExtension
                 pwnChromeProfileDir,
                 ProfileColors.valueOf(themeColor.toUpperCase())
         );
-        // build --load-extension argument passed to the Chromium to hot-load proxy, theme and header extensions
+        // build --load-extension argument passed to the Chromium to hot-load proxy,
+        // theme and header extensions
         return "--load-extension=" + String.join(
                 ",",
                 browserExtensions.getHeaderExtensionDir(),
@@ -56,28 +59,80 @@ public class PwnFoxForChromium implements BurpExtension
                 BROWSER_DATA_PREFIX,
                 themeColor.toLowerCase()
         ).toString();
-        return "--user-data-dir="+pwnChromeBrowserDataDir;
+        return "--user-data-dir=" + pwnChromeBrowserDataDir;
     }
 
     private void populateDefaults() {
-        // populate default options for the extension
-        // only Chromium profiles directory is supported for now
-        String persistentProfilesDir = this.api.persistence().preferences().getString(PERSISTENT_PROFILES_DIR);
-        // set the profiles directory to ~/.PwnChromiumData if nothing was declared
-        // bail out otherwards
-        if (persistentProfilesDir == null) {
-            String homeDir = System.getProperty("user.home");
-            Path profileDirPath = Paths.get(homeDir, ".PwnChromiumData");
-            try {
-                if (!Files.exists(profileDirPath)) {
-                    Files.createDirectory(profileDirPath);
-                    this.api.persistence().preferences().setString(PERSISTENT_PROFILES_DIR, profileDirPath.toString());
-                    this.api.logging().logToOutput("Created ~/.PwnChromiumData directory...");
-                }
-            } catch (IOException e) {
-                this.api.logging().logToError(e);
-            }
+        if (!settingExists(PERSISTENT_CHROMIUM_PATH)) {
+            populateChromiumPath();
         }
+        if (!settingExists(PERSISTENT_PROFILES_DIR)) {
+            populateProfilesDir();
+        }
+    }
+
+    private boolean settingExists(String settingName) {
+        return this.api.persistence().preferences().getString(settingName) != null;
+    }
+
+    private void populateChromiumPath() {
+        String chromiumPath = tryGetBurpbrowserPath();
+        if (chromiumPath != null) {
+            this.api.persistence().preferences().setString(PERSISTENT_CHROMIUM_PATH, chromiumPath);
+        }
+    }
+
+    private void populateProfilesDir() {
+        String profileDirPath = tryCreateProfilesDir(); 
+        if (profileDirPath != null) {
+            this.api.persistence().preferences().setString(PERSISTENT_PROFILES_DIR, profileDirPath);
+        }
+    }
+
+    private String tryGetBurpbrowserPath() {
+        String chromiumGlob = "regex:[Cc]hrom(e|ium)(\\.exe)?";
+
+        Path userDirPath = Paths.get(
+                System.getProperty("user.dir"));
+
+        FileSystem fs = FileSystems.getDefault();
+        PathMatcher matcher = fs.getPathMatcher(chromiumGlob);
+
+        try {
+            String chromiumPath = Files.walk(userDirPath, 10)
+                    .filter(Files::isRegularFile)
+                    .filter(Files::isExecutable)
+                    .filter(path -> matcher.matches(path.getFileName()))
+                    .findFirst()
+                    .get()
+                    .toAbsolutePath()
+                    .toString();
+
+            this.api.logging().logToOutput("Chromium located: " + chromiumPath);
+            return chromiumPath;
+
+        } catch (Exception e) {
+            this.api.logging().logToError("Failed to locate Chromium executable automatically");
+            this.api.logging().logToError(e);
+        }
+        return null;
+    }
+
+    private String tryCreateProfilesDir() {
+        Path profileDirPath = Paths.get(
+                System.getProperty("user.home"),
+                ".PwnChromiumData");
+        try {
+            if (!Files.exists(profileDirPath)) {
+                Files.createDirectory(profileDirPath);
+                this.api.logging().logToOutput("Created ~/.PwnChromiumData directory successfully...");
+                return profileDirPath.toString();
+            }
+        } catch (IOException e) {
+            this.api.logging().logToError("Failed to create ~/.PwnChromiumData directory");
+            this.api.logging().logToError(e);
+        }
+        return null;
     }
 
     public boolean startDetachedPwnChromium(String pwnChromeExePath, String pwnChromeProfileDir, String themeColor) {
@@ -88,8 +143,8 @@ public class PwnFoxForChromium implements BurpExtension
                     new String[] { pwnChromeExePath },
                     PWNCHROME_DEFAULT_ARGS,
                     new String[] { getPwnChromiumLoadExtensionArgs(pwnChromeProfileDir, themeColor) },
-                    new String[] { getPwnChromiumProfileArgs(pwnChromeProfileDir, themeColor) }
-            );
+                    new String[] { getPwnChromiumProfileArgs(pwnChromeProfileDir, themeColor)
+            });
             ProcessBuilder processBuilder = new ProcessBuilder(pwnChromiumArgs);
             processBuilder.start();
             return true;
@@ -100,8 +155,7 @@ public class PwnFoxForChromium implements BurpExtension
     }
 
     @Override
-    public void initialize(MontoyaApi api)
-    {
+    public void initialize(MontoyaApi api) {
         this.api = api;
         this.api.extension().setName("PwnFox For Chromium");
         populateDefaults();
