@@ -62,7 +62,7 @@ public class PwnFoxForChromium implements BurpExtension {
         return "--user-data-dir=" + pwnChromeBrowserDataDir;
     }
 
-    private void populateDefaults() {
+    private void populateDefaultSettings() {
         if (!settingExists(PERSISTENT_CHROMIUM_PATH)) {
             populateChromiumPath();
         }
@@ -158,7 +158,7 @@ public class PwnFoxForChromium implements BurpExtension {
     public void initialize(MontoyaApi api) {
         this.api = api;
         this.api.extension().setName("PwnFox For Chromium");
-        populateDefaults();
+        populateDefaultSettings();
         this.api.logging().logToOutput("PwnFox For Chromium - Options loaded...");
         this.api.userInterface().registerSuiteTab("PwnFox For Chromium", new PwnFoxForChromiumUI(this).getUI());
         this.api.logging().logToOutput("PwnFox For Chromium - Suite Tab loaded...");
