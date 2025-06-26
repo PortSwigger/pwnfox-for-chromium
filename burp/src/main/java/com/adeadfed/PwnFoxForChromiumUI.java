@@ -18,11 +18,10 @@ import java.util.Locale;
 
 public class PwnFoxForChromiumUI {
     private JPanel ui;
-    private final PwnFoxForChromium pwnChromiumExtension;
+    private PwnFoxForChromium pwnChromiumExtension;
     private JTextField pwnChromeExePath;
     private JTextField pwnChromeProfilesPath;
     private JButton chooseExeButton;
-    private JButton chooseExtDirButton;
     private JButton chooseProfilesDirButton;
     private JPanel settingsPanel;
     private JPanel buttonsPanel;
@@ -36,7 +35,7 @@ public class PwnFoxForChromiumUI {
     private JButton magentaButton;
 
     public JPanel getUI() {
-        return this.ui;
+        return ui;
     }
 
     private void uiChoosePath(JTextField uiPath, String settingsKey, int pathMode) {
@@ -45,7 +44,7 @@ public class PwnFoxForChromiumUI {
         int result = fileChooser.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
             String path = fileChooser.getSelectedFile().getAbsolutePath();
-            this.pwnChromiumExtension.api.persistence().preferences().setString(settingsKey, path);
+            pwnChromiumExtension.montoyaApi.persistence().preferences().setString(settingsKey, path);
             uiPath.setText(path);
         } else {
             JOptionPane.showMessageDialog(null, "Nothing selected!");
@@ -62,7 +61,7 @@ public class PwnFoxForChromiumUI {
         if (areSettingsValid()) {
             String chromiumExePath = pwnChromeExePath.getText();
             String chromiumProfilesPath = pwnChromeProfilesPath.getText();
-            boolean result = this.pwnChromiumExtension.startDetachedPwnChromium(chromiumExePath, chromiumProfilesPath, themeColor);
+            boolean result = pwnChromiumExtension.startDetachedPwnChromium(chromiumExePath, chromiumProfilesPath, themeColor);
             if (!result) {
                 JOptionPane.showMessageDialog(null, "An error launching PwnChromium has occurred. Check the extension logs");
             }
@@ -71,7 +70,7 @@ public class PwnFoxForChromiumUI {
 
     private void setupSettingsButton(JButton button, JTextField uiPath, String settingsKey, int pathMode) {
         // setup settings buttons to pick the required Chrome exe and extension dir using Swing GUI
-        String path = this.pwnChromiumExtension.api.persistence().preferences().getString(settingsKey);
+        String path = pwnChromiumExtension.montoyaApi.persistence().preferences().getString(settingsKey);
         if (path != null) {
             uiPath.setText(path);
         }
@@ -94,11 +93,16 @@ public class PwnFoxForChromiumUI {
         }
     }
 
+    private void setPwnChromiumExtension(PwnFoxForChromium extension) {
+        this.pwnChromiumExtension = extension;
+    }
+
     public PwnFoxForChromiumUI(PwnFoxForChromium pwnChromiumExtension) {
-        // setup Swing GUI
-        this.pwnChromiumExtension = pwnChromiumExtension;
-        this.pwnChromeExePath.setInputVerifier(new TextFieldVerifier(FsValidator::isChromiumExecutableValid));
-        this.pwnChromeProfilesPath.setInputVerifier(new TextFieldVerifier(FsValidator::isDirValid));
+        setPwnChromiumExtension(pwnChromiumExtension);
+
+        pwnChromeExePath.setInputVerifier(new TextFieldVerifier(FsValidator::isChromiumExecutableValid));
+        pwnChromeProfilesPath.setInputVerifier(new TextFieldVerifier(FsValidator::isDirValid));
+       
         setupSettingsButton(chooseExeButton, pwnChromeExePath, PERSISTENT_CHROMIUM_PATH, JFileChooser.FILES_ONLY);
         setupSettingsButton(chooseProfilesDirButton, pwnChromeProfilesPath, PERSISTENT_PROFILES_DIR, JFileChooser.DIRECTORIES_ONLY);
         setupProfileButtons();

@@ -17,7 +17,7 @@ import java.nio.file.PathMatcher;
 import java.nio.file.FileSystems;
 
 public class PwnFoxForChromium implements BurpExtension {
-    public MontoyaApi api;
+    public MontoyaApi montoyaApi;
 
 
     // https://stackoverflow.com/questions/80476/how-can-i-concatenate-two-arrays-in-java
@@ -72,20 +72,20 @@ public class PwnFoxForChromium implements BurpExtension {
     }
 
     private boolean settingExists(String settingName) {
-        return this.api.persistence().preferences().getString(settingName) != null;
+        return montoyaApi.persistence().preferences().getString(settingName) != null;
     }
 
     private void populateChromiumPath() {
         String chromiumPath = tryGetBurpbrowserPath();
         if (chromiumPath != null) {
-            this.api.persistence().preferences().setString(PERSISTENT_CHROMIUM_PATH, chromiumPath);
+            montoyaApi.persistence().preferences().setString(PERSISTENT_CHROMIUM_PATH, chromiumPath);
         }
     }
 
     private void populateProfilesDir() {
         String profileDirPath = tryCreateProfilesDir(); 
         if (profileDirPath != null) {
-            this.api.persistence().preferences().setString(PERSISTENT_PROFILES_DIR, profileDirPath);
+            montoyaApi.persistence().preferences().setString(PERSISTENT_PROFILES_DIR, profileDirPath);
         }
     }
 
@@ -108,12 +108,12 @@ public class PwnFoxForChromium implements BurpExtension {
                     .toAbsolutePath()
                     .toString();
 
-            this.api.logging().logToOutput("Chromium located: " + chromiumPath);
+            montoyaApi.logging().logToOutput("Chromium located: " + chromiumPath);
             return chromiumPath;
 
         } catch (Exception e) {
-            this.api.logging().logToError("Failed to locate Chromium executable automatically");
-            this.api.logging().logToError(e);
+            montoyaApi.logging().logToError("Failed to locate Chromium executable automatically");
+            montoyaApi.logging().logToError(e);
         }
         return null;
     }
@@ -125,12 +125,12 @@ public class PwnFoxForChromium implements BurpExtension {
         try {
             if (!Files.exists(profileDirPath)) {
                 Files.createDirectory(profileDirPath);
-                this.api.logging().logToOutput("Created ~/.PwnChromiumData directory successfully...");
+                montoyaApi.logging().logToOutput("Created ~/.PwnChromiumData directory successfully...");
                 return profileDirPath.toString();
             }
         } catch (IOException e) {
-            this.api.logging().logToError("Failed to create ~/.PwnChromiumData directory");
-            this.api.logging().logToError(e);
+            montoyaApi.logging().logToError("Failed to create ~/.PwnChromiumData directory");
+            montoyaApi.logging().logToError(e);
         }
         return null;
     }
@@ -149,20 +149,25 @@ public class PwnFoxForChromium implements BurpExtension {
             processBuilder.start();
             return true;
         } catch (Exception e) {
-            this.api.logging().logToError(e);
+            montoyaApi.logging().logToError(e);
             return false;
         }
     }
 
+    private void setMontoyaApi(MontoyaApi api) {
+        this.montoyaApi = api;
+    }
+
     @Override
     public void initialize(MontoyaApi api) {
-        this.api = api;
-        this.api.extension().setName("PwnFox For Chromium");
+        setMontoyaApi(api);
+
+        montoyaApi.extension().setName("PwnFox For Chromium");
         populateDefaultSettings();
-        this.api.logging().logToOutput("PwnFox For Chromium - Options loaded...");
-        this.api.userInterface().registerSuiteTab("PwnFox For Chromium", new PwnFoxForChromiumUI(this).getUI());
-        this.api.logging().logToOutput("PwnFox For Chromium - Suite Tab loaded...");
-        this.api.proxy().registerRequestHandler(new PwnFoxForChromiumRequestHandler());
-        this.api.logging().logToOutput("PwnFox For Chromium - Request Interceptor loaded...");
+        montoyaApi.logging().logToOutput("PwnFox For Chromium - Options loaded...");
+        montoyaApi.userInterface().registerSuiteTab("PwnFox For Chromium", new PwnFoxForChromiumUI(this).getUI());
+        montoyaApi.logging().logToOutput("PwnFox For Chromium - Suite Tab loaded...");
+        montoyaApi.proxy().registerRequestHandler(new PwnFoxForChromiumRequestHandler());
+        montoyaApi.logging().logToOutput("PwnFox For Chromium - Request Interceptor loaded...");
     }
 }
