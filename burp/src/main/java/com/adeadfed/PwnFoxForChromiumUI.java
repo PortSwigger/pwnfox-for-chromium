@@ -99,7 +99,7 @@ public class PwnFoxForChromiumUI {
         this.pwnChromiumExtension = pwnChromiumExtension;
         this.pwnChromeExePath.setInputVerifier(new TextFieldVerifier(FsValidator::isChromiumExecutableValid));
         this.pwnChromeProfilesPath.setInputVerifier(new TextFieldVerifier(FsValidator::isDirValid));
-        setupSettingsButton(chooseExeButton, pwnChromeExePath, PERSISTENT_CHROME_EXE, JFileChooser.FILES_ONLY);
+        setupSettingsButton(chooseExeButton, pwnChromeExePath, PERSISTENT_CHROMIUM_PATH, JFileChooser.FILES_ONLY);
         setupSettingsButton(chooseProfilesDirButton, pwnChromeProfilesPath, PERSISTENT_PROFILES_DIR, JFileChooser.DIRECTORIES_ONLY);
         setupProfileButtons();
     }

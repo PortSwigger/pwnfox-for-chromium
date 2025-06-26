@@ -2,7 +2,7 @@ package com.adeadfed.common;
 
 public class Constants {
     // names of extension settings to be stored in the persistent Montoya's Persistence API
-    public static String PERSISTENT_CHROME_EXE = "PwnChromeExePath";
+    public static String PERSISTENT_CHROMIUM_PATH = "PwnChromeExePath";
     public static String PERSISTENT_PROFILES_DIR = "PwnChromeProfilesPath";
     // hard-wired names of required directories in the PwnChrome extensions directory
     // need this to validate that the user gave us a valid path to the directory with
