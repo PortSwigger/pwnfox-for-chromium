@@ -2,6 +2,7 @@ package com.adeadfed;
 
 import static com.adeadfed.common.Constants.*;
 import com.adeadfed.common.ProfileColors;
+import com.adeadfed.browser.Browser;
 import com.adeadfed.validators.FsValidator;
 
 import com.adeadfed.validators.TextFieldVerifier;
@@ -61,9 +62,15 @@ public class PwnFoxForChromiumUI {
         if (areSettingsValid()) {
             String chromiumExePath = pwnChromeExePath.getText();
             String chromiumProfilesPath = pwnChromeProfilesPath.getText();
-            boolean result = pwnChromiumExtension.startDetachedPwnChromium(chromiumExePath, chromiumProfilesPath, themeColor);
-            if (!result) {
+            Browser browser = new Browser(chromiumExePath, chromiumProfilesPath, themeColor);
+            try {
+                Process process = browser.start();
+                pwnChromiumExtension.montoyaApi.logging().logToOutput(
+                    String.format("PwnChromium %s started with PID: %d", themeColor, process.pid())
+                );
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "An error launching PwnChromium has occurred. Check the extension logs");
+                pwnChromiumExtension.montoyaApi.logging().logToError(e);
             }
         }
     }

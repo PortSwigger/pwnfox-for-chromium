@@ -4,14 +4,11 @@ import static com.adeadfed.common.Constants.*;
 
 import burp.api.montoya.BurpExtension;
 import burp.api.montoya.MontoyaApi;
-import com.adeadfed.browser_extensions.BrowserExtensionsLoader;
-import com.adeadfed.common.ProfileColors;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.nio.file.FileSystem;
 import java.nio.file.PathMatcher;
 import java.nio.file.FileSystems;
@@ -19,48 +16,6 @@ import java.nio.file.FileSystems;
 public class PwnFoxForChromium implements BurpExtension {
     public MontoyaApi montoyaApi;
 
-
-    // https://stackoverflow.com/questions/80476/how-can-i-concatenate-two-arrays-in-java
-    // sorry if this causes heap pollution ¯\_(ツ)_/¯
-    // guess it's your usual BurpSuite experience then
-    @SafeVarargs
-    private static <T> T[] concatAll(T[] first, T[]... rest) {
-        int totalLength = first.length;
-        for (T[] array : rest) {
-            totalLength += array.length;
-        }
-        T[] result = Arrays.copyOf(first, totalLength);
-        int offset = first.length;
-        for (T[] array : rest) {
-            System.arraycopy(array, 0, result, offset, array.length);
-            offset += array.length;
-        }
-        return result;
-    }
-
-    private String getPwnChromiumLoadExtensionArgs(String pwnChromeProfileDir, String themeColor) throws IOException {
-        BrowserExtensionsLoader browserExtensions = new BrowserExtensionsLoader(
-                pwnChromeProfileDir,
-                ProfileColors.valueOf(themeColor.toUpperCase())
-        );
-        // build --load-extension argument passed to the Chromium to hot-load proxy,
-        // theme and header extensions
-        return "--load-extension=" + String.join(
-                ",",
-                browserExtensions.getHeaderExtensionDir(),
-                browserExtensions.getProxyExtensionDir(),
-                browserExtensions.getThemeDir()
-        );
-    }
-
-    private String getPwnChromiumProfileArgs(String pwnChromeProfileDir, String themeColor) {
-        String pwnChromeBrowserDataDir = Paths.get(
-                pwnChromeProfileDir,
-                BROWSER_DATA_PREFIX,
-                themeColor.toLowerCase()
-        ).toString();
-        return "--user-data-dir=" + pwnChromeBrowserDataDir;
-    }
 
     private void populateDefaultSettings() {
         if (!settingExists(PERSISTENT_CHROMIUM_PATH)) {
@@ -133,25 +88,6 @@ public class PwnFoxForChromium implements BurpExtension {
             montoyaApi.logging().logToError(e);
         }
         return null;
-    }
-
-    public boolean startDetachedPwnChromium(String pwnChromeExePath, String pwnChromeProfileDir, String themeColor) {
-        // start Chromium with needed args and a correct profile
-        try {
-            String[] pwnChromiumArgs = concatAll(
-                    // I just want my list expansion from Python >:(
-                    new String[] { pwnChromeExePath },
-                    PWNCHROME_DEFAULT_ARGS,
-                    new String[] { getPwnChromiumLoadExtensionArgs(pwnChromeProfileDir, themeColor) },
-                    new String[] { getPwnChromiumProfileArgs(pwnChromeProfileDir, themeColor)
-            });
-            ProcessBuilder processBuilder = new ProcessBuilder(pwnChromiumArgs);
-            processBuilder.start();
-            return true;
-        } catch (Exception e) {
-            montoyaApi.logging().logToError(e);
-            return false;
-        }
     }
 
     private void setMontoyaApi(MontoyaApi api) {

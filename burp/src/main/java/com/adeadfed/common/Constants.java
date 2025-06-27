@@ -12,40 +12,6 @@ public class Constants {
     public static String THEME_DIR = "themes";
     public static String HEADER_EXTENSION_DIR = "header-extension";
     public static String PROXY_EXTENSION_DIR = "proxy-extension";
-    // taken from args passed to the built-in BurpSuite Chromium browser
-    public static String[] PWNCHROME_DEFAULT_ARGS = {
-            "--ignore-certificate-errors",
-            "--disable-ipc-flooding-protection",
-            "--disable-xss-auditor",
-            "--disable-bundled-ppapi-flash",
-            "--disable-plugins-discovery",
-            "--disable-default-apps",
-            "--disable-prerender-local-predictor",
-            "--disable-sync",
-            "--disable-breakpad",
-            "--disable-crash-reporter",
-            "--disable-prerender-local-predictor",
-            "--disk-cache-size=0",
-            "--disable-settings-window",
-            "--disable-notifications",
-            "--disable-speech-api",
-            "--disable-file-system",
-            "--disable-presentation-api",
-            "--disable-permissions-api",
-            "--disable-new-zip-unpacker",
-            "--disable-media-session-api",
-            "--no-experiments",
-            "--no-events",
-            "--no-first-run",
-            "--no-default-browser-check",
-            "--no-pings",
-            "--no-service-autorun",
-            "--media-cache-size=0",
-            "--use-fake-device-for-media-stream",
-            "--dbus-stub",
-            "--disable-background-networking",
-            "--disable-features=ChromeWhatsNewUI,HttpsUpgrades,ImageServiceObserveSyncDownloadStatus"
-    };
     // name of the HTTP PwnFox header
     public static String PWNFOX_HEADER = "X-Pwnfox-Color";
 }
