@@ -1,6 +1,7 @@
 package com.adeadfed;
 
-import static com.adeadfed.common.Constants.*;
+import com.adeadfed.preferences.Preference;
+
 import com.adeadfed.common.ProfileColors;
 import com.adeadfed.browser.Browser;
 import com.adeadfed.validators.FsValidator;
@@ -39,13 +40,13 @@ public class PwnFoxForChromiumUI {
         return ui;
     }
 
-    private void uiChoosePath(JTextField uiPath, String settingsKey, int pathMode) {
+    private void uiChoosePath(Preference preference, JTextField uiPath, int pathMode) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(pathMode);
         int result = fileChooser.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
             String path = fileChooser.getSelectedFile().getAbsolutePath();
-            pwnChromiumExtension.montoyaApi.persistence().preferences().setString(settingsKey, path);
+            pwnChromiumExtension.pwnChromiumPreferences.set(preference, path);
             uiPath.setText(path);
         } else {
             JOptionPane.showMessageDialog(null, "Nothing selected!");
@@ -75,13 +76,13 @@ public class PwnFoxForChromiumUI {
         }
     }
 
-    private void setupSettingsButton(JButton button, JTextField uiPath, String settingsKey, int pathMode) {
+    private void setupPreferenceButton(Preference preference, JButton button, JTextField uiPath, int pathMode) {
         // setup settings buttons to pick the required Chrome exe and extension dir using Swing GUI
-        String path = pwnChromiumExtension.montoyaApi.persistence().preferences().getString(settingsKey);
+        String path = pwnChromiumExtension.pwnChromiumPreferences.get(preference);
         if (path != null) {
             uiPath.setText(path);
         }
-        button.addActionListener(e -> uiChoosePath(uiPath, settingsKey, pathMode));
+        button.addActionListener(e -> uiChoosePath(preference, uiPath, pathMode));
     }
 
     private void setupProfileButtons() {
@@ -110,8 +111,20 @@ public class PwnFoxForChromiumUI {
         pwnChromeExePath.setInputVerifier(new TextFieldVerifier(FsValidator::isChromiumExecutableValid));
         pwnChromeProfilesPath.setInputVerifier(new TextFieldVerifier(FsValidator::isDirValid));
        
-        setupSettingsButton(chooseExeButton, pwnChromeExePath, PERSISTENT_CHROMIUM_PATH, JFileChooser.FILES_ONLY);
-        setupSettingsButton(chooseProfilesDirButton, pwnChromeProfilesPath, PERSISTENT_PROFILES_DIR, JFileChooser.DIRECTORIES_ONLY);
+        setupPreferenceButton(
+            pwnChromiumExtension.pwnChromiumPreferences.browserPath,
+            chooseExeButton,
+            pwnChromeExePath, 
+            JFileChooser.FILES_ONLY
+        );
+
+        setupPreferenceButton(
+            pwnChromiumExtension.pwnChromiumPreferences.profilesDir,
+            chooseProfilesDirButton,
+            pwnChromeProfilesPath,
+            JFileChooser.DIRECTORIES_ONLY
+        );
+
         setupProfileButtons();
     }
 
