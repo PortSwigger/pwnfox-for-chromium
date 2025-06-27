@@ -193,7 +193,6 @@ public class PwnFoxForChromiumUI {
         Font yellowButtonFont = this.$$$getFont$$$(null, Font.BOLD, 16, yellowButton.getFont());
         if (yellowButtonFont != null) yellowButton.setFont(yellowButtonFont);
         yellowButton.setForeground(white);
-        yellowButton.setLabel("Yellow");
         yellowButton.setName("Yellow");
         yellowButton.setText("Yellow");
         buttonsPanel.add(yellowButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 100), null, 0, false));
