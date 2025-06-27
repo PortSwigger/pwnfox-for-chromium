@@ -45,13 +45,13 @@ public class PwnFoxForChromium implements BurpExtension {
     }
 
     private String tryGetBurpbrowserPath() {
-        String chromiumGlob = "regex:[Cc]hrom(e|ium)(\\.exe)?";
+        String chromiumRegex = "regex:[Cc]hrom(e|ium)(\\.exe)?";
 
         Path userDirPath = Paths.get(
                 System.getProperty("user.dir"));
 
         FileSystem fs = FileSystems.getDefault();
-        PathMatcher matcher = fs.getPathMatcher(chromiumGlob);
+        PathMatcher matcher = fs.getPathMatcher(chromiumRegex);
 
         try {
             String chromiumPath = Files.walk(userDirPath, 10)
