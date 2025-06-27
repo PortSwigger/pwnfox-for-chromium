@@ -7,15 +7,16 @@ import java.util.Arrays;
 
 import com.adeadfed.common.ProfileColors;
 import com.adeadfed.browser_extensions.BrowserExtensionsLoader;
-import static com.adeadfed.common.Constants.*;
 
 public class Browser {
     private String exePath;
     private String profilesPath;
     private String themeColor;
 
+    private final String BROWSER_DATA_PREFIX = "browser-data";
+
     // taken from args passed to the built-in BurpSuite Chromium browser
-    private static String[] PWNCHROME_DEFAULT_ARGS = {
+    private final String[] PWNCHROME_DEFAULT_ARGS = {
         "--ignore-certificate-errors",
         "--disable-ipc-flooding-protection",
         "--disable-xss-auditor",
