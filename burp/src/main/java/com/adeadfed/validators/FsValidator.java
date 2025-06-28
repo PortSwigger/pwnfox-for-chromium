@@ -19,16 +19,12 @@ public class FsValidator {
         // a more robust check if this is actually a Chromium exe
         if (System.getProperty("os.name").startsWith("Windows")) {
             // skip this check on Windows cause apparently Chrome.exe does not have --version flag
-            // why?
-            // cause fuck you, that's why
             return true;
         }
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(pwnChromeExePath, "--version");
             Process process = processBuilder.start();
             String output = new String(process.getInputStream().readAllBytes());
-            // check for a substring of "Chrom" in either "Chrome" or "Chromium"
-            // if that's the case, then we should be good
             return output.contains("Chrom");
         } catch (IOException e) {
             return false;

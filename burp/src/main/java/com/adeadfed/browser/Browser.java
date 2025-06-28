@@ -75,8 +75,6 @@ public class Browser {
                 profilesPath,
                 ProfileColors.valueOf(themeColor.toUpperCase())
         );
-        // build --load-extension argument passed to the Chromium to hot-load proxy,
-        // theme and header extensions
         return "--load-extension=" + String.join(
                 ",",
                 browserExtensions.getHeaderExtensionDir(),
@@ -95,8 +93,6 @@ public class Browser {
     }
 
     // https://stackoverflow.com/questions/80476/how-can-i-concatenate-two-arrays-in-java
-    // sorry if this causes heap pollution ¯\_(ツ)_/¯
-    // guess it's your usual BurpSuite experience then
     @SafeVarargs
     private static <T> T[] concatAll(T[] first, T[]... rest) {
         int totalLength = first.length;
