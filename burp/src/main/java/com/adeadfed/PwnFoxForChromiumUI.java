@@ -59,7 +59,6 @@ public class PwnFoxForChromiumUI {
     }
 
     private void uiStartDetachedPwnChromium(String themeColor) {
-        // validate settings before the launch one final time
         if (areSettingsValid()) {
             String chromiumExePath = pwnChromeExePath.getText();
             String chromiumProfilesPath = pwnChromeProfilesPath.getText();
@@ -77,7 +76,6 @@ public class PwnFoxForChromiumUI {
     }
 
     private void setupPreferenceButton(Preference preference, JButton button, JTextField uiPath, int pathMode) {
-        // setup settings buttons to pick the required Chrome exe and extension dir using Swing GUI
         String path = pwnChromiumExtension.pwnChromiumPreferences.get(preference);
         if (path != null) {
             uiPath.setText(path);
