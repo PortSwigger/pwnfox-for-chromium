@@ -5,7 +5,6 @@ import com.adeadfed.common.ProfileColors;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 abstract class ColorExtension extends Extension {

@@ -12,11 +12,16 @@ PwnFox For Chromium allows you to:
 
 ## Setup
 1. Download the up-to-date `PwnFox-For-Chromium.jar` from the [Releases](https://github.com/adeadfed/PwnFox-For-Chromium/releases) tab
-2. Import the PwnFox For Chromium JAR into the BurpSuite
-3. Navigate to the new extension tab and configure the settings below
-   - Set the Chromium path to a valid executable. BurpSuite is shipped with an embedded Chromium in the `burpbrowser` folder; you can lookup the location of your Burp Browser below ([## Burp Browser location](#burp-browser-location))
-   - *Optionally* set your desired profile data directory to keep your work on different projects separated 
-4. Launch the configured Chromium right from the BurpSuite and enjoy!
+2. Import the PwnFox For Chromium JAR into the BurpSuite    
+3. Launch the configured Chromium right from the extension tab in your BurpSuite and enjoy!
+
+## Optional configuration
+v1.2.0 release of PwnFox For Chromium automatically prepopulates the default settings when the extension is loaded, so you don't have to manually configure anything anymore. However, if you wish to tweak the settings or something has failed, these settings must be set at the bottom of the extension tab:
+1. Path to the Chromium executable
+> Browser executable that will be used by the extension. BurpSuite is shipped with an embedded Chromium in the `burpbrowser` folder; you can look up the location of your Burp Browser below ([## Burp Browser location](#burp-browser-location))
+
+2. Path to the PwnFox For Chromium profile data directory
+> Directory where browser data from the extension will be stored. Default value - `.PwnChromiumData`; You can set this setting to a different value to keep your work on the current project separated from the other ones.
 
 ## Burp Browser location
 You can use Burp's built-in browser to deploy PwnFox for Chromium. Here are the common locations of Burp's Chrome executable:
@@ -52,8 +57,8 @@ You can edit Chromium proxy configuration and enable/disable it using the built-
 ![](readme/browser-settings.png)
 
 ## Why this instead of [autochrome](https://github.com/nccgroup/autochrome)?
+- PwnFox For Chromium is a one-click, ready-to-use solution after installation! Every dependency is embedded into the JAR file
 - You don't need to download a separate Chromium browser for this extension. You can reuse the already existing Chrome/Chromium installation on your PC, or, even better, use the Chromium bundled with BurpSuite!
-- All dependencies are shipped in a single JAR file
 - The traffic will be color-coded in the Proxy tab exactly like in the [PwnFox](https://github.com/yeswehack/PwnFox) BurpSuite plugin
 - All extension settings can be managed in BurpSuite directly
 - Additional options for proxy configuration in the bundled Chromium extensions

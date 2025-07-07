@@ -6,12 +6,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static com.adeadfed.common.Constants.*;
-
 public class BrowserExtensionsLoader {
-    public HeaderExtension headerExtension;
-    public ProxyExtension proxyExtension;
-    public ThemeExtension themeExtension;
+
+    private final String HEADER_EXTENSION_DIR = "header-extension";
+    private final String PROXY_EXTENSION_DIR = "proxy-extension";
+    private final String THEME_DIR = "themes";
+
+    private static String BROWSER_EXTENSIONS_PREFIX = "browser-extensions";
+
+    private HeaderExtension headerExtension;
+    private ProxyExtension proxyExtension;
+    private ThemeExtension themeExtension;
 
     public BrowserExtensionsLoader(String pwnChromeProfileDir, ProfileColors profileColor) throws IOException {
         String browserExtensionsDir = Paths.get(
