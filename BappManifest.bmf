@@ -1,0 +1,13 @@
+Uuid: 239c6b45a4ae4834acc90202566a1aac
+ExtensionType: 1
+Name: PwnFox For Chromium
+RepoName: pwnfox-for-chromium
+ScreenVersion: 1.1.0
+SerialVersion: 1
+MinPlatformVersion: 16
+ProOnly: False
+Author: Maksym Vatsyk
+ShortDescription: Allows you to use Chromium with PwnFox.
+EntryPoint: burp/target/PwnFox-For-Chromium-1.1-SNAPSHOT-jar-with-dependencies.jar
+BuildCommand: cd burp && mvn clean compile assembly:single
+SupportedProducts: Pro, Community
