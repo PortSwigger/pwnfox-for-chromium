@@ -9,5 +9,5 @@ ProOnly: False
 Author: Maksym Vatsyk
 ShortDescription: Allows you to use Chromium with PwnFox.
 EntryPoint: burp/target/PwnFox-For-Chromium-1.1-SNAPSHOT-jar-with-dependencies.jar
-BuildCommand: cd burp && mvn clean compile assembly:single
+BuildCommand: mvn clean compile assembly:single
 SupportedProducts: Pro, Community
