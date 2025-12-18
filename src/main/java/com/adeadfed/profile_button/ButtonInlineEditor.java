@@ -9,25 +9,41 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
 public class ButtonInlineEditor {
+    private JButton button;
+    private JTextField textField;
+    private ButtonGridLayout layout;
 
-    public static JTextField fromButton(JButton source) {
-        JTextField editor = new JTextField(source.getText());
-        editor.setFont(source.getFont());
-        editor.setForeground(source.getForeground());
-        editor.setBackground(source.getBackground());
-        editor.setBorder(source.getBorder());
-        editor.setHorizontalAlignment(SwingConstants.CENTER);
+    public ButtonInlineEditor(JButton button) throws Exception {
+        this.button = button;
+        layout = new ButtonGridLayout(button);
+
+        textField = new JTextField(button.getText());
+        textField.setFont(button.getFont());
+        textField.setForeground(button.getForeground());
+        textField.setBackground(button.getBackground());
+        textField.setBorder(button.getBorder());
+        textField.setHorizontalAlignment(SwingConstants.CENTER);
 
         SwingUtilities.invokeLater(() -> {
-                editor.requestFocusInWindow();
-                editor.selectAll();
+                textField.requestFocusInWindow();
+                textField.selectAll();
         });
-        
-        return editor;
     }
 
-    public static void setupCallback(JTextField editor, Runnable callback) {
-        editor.addActionListener(e -> callback.run());
-        editor.addFocusListener(new FocusAdapter() { @Override public void focusLost(FocusEvent e) { callback.run(); } });
+    public String getText() {
+        return textField.getText().trim();
+    }
+
+    public void setupCallback(Runnable callback) {
+        textField.addActionListener(e -> callback.run());
+        textField.addFocusListener(new FocusAdapter() { @Override public void focusLost(FocusEvent e) { callback.run(); } });
+    }
+
+    public void startEdit() {
+        layout.swapComponent(button, textField);
+    }
+
+    public void stopEdit() {
+        layout.swapComponent(textField, button);
     }
 }

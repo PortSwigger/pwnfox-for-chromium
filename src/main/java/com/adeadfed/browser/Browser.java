@@ -5,7 +5,6 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import com.adeadfed.common.OsType;
 import com.adeadfed.common.ProfileColors;
 import com.adeadfed.browser_extensions.BrowserExtensionsLoader;
 
@@ -77,16 +76,6 @@ public class Browser {
     }
 
     private String[] getExeArgs() {
-        if (OsType.isMacOS()) {
-            // this should prevent icons from being treated as separate instances in the dock
-            return new String[] {
-                "open",
-                "-a",
-                exePath,
-                "-n",
-                "--args"
-            };
-        }
         return new String[] { exePath };
     } 
 
