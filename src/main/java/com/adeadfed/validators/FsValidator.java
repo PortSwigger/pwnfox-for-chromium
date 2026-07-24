@@ -27,7 +27,7 @@ public class FsValidator {
             ProcessBuilder processBuilder = new ProcessBuilder(pwnChromeExePath, "--version");
             Process process = processBuilder.start();
             String output = new String(process.getInputStream().readAllBytes());
-            return output.contains("Chrom");
+            return output.contains("Chrom") || output.contains("Burp");
         } catch (IOException e) {
             return false;
         }
